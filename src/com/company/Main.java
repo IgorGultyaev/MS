@@ -1,58 +1,106 @@
 package com.company;
 
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.Scanner;
 
 public class Main {
+    public static Scanner scanner = new Scanner(System.in);
+    public static PhoneBook phoneBook;
 
-    static Scanner scanner = new Scanner(System.in);
+    public static PhoneBook addContact(PhoneBook phoneBook) {
+        System.out.println("Фамилию");
+        String surname = scanner.nextLine();
+        String nameGroup;
 
-    public static Map<MissedCall, String> createMissedCalls (Map <String, Contact> contacts, Map<MissedCall, String>  missedCalls, int num){
-        for (int numMC = 0; numMC < num; numMC++) {
-            String phone = DataGenerator.getRNDPhone(DataGenerator.RNDRangePhone);
+        System.out.println("Имя");
+        String name = scanner.nextLine();
 
-            if (contacts.containsKey(phone)) {
-                phone = contacts.get(phone).getFIO();
-            }
-            missedCalls.put(new MissedCall(), phone);
+        System.out.println("Отчество");
+        String patronymic = scanner.nextLine();
+
+        System.out.println("Пол: М/Ж");
+        String genderChoice = scanner.nextLine();
+        Gender gender;
+        if (genderChoice.equals("М")) {
+            gender = Gender.MAN;
+        } else if (genderChoice.equals("Ж")) {
+            gender = Gender.FEMALE;
+        } else {
+            System.out.println("Ок Пусть будет Ж");
+            gender = Gender.FEMALE;
         }
-        return missedCalls;
-    }
+        System.out.println("Телефон");
+        String phoneNumber = scanner.nextLine();
+        Contact contact = new Contact(name, surname, patronymic, gender, phoneNumber);
 
-    public static void printContacts(Map<String, Contact> contacts) {
-        System.out.println("Вывести на печать " + contacts.size() + " Записей? Введите да/нет");
-        String choice = scanner.nextLine();
-        if (choice.equals("да")) {
-            contacts.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println("Введите имя группы");
+        nameGroup = scanner.nextLine();
+        phoneBook.addContactInGroup(nameGroup, contact);
+        if (phoneBook.getPhoneBook().containsKey(null)) {
+            phoneBook.getPhoneBook().remove(null);
         }
+        return phoneBook;
     }
-
-        public static void printMissedCalls(Map<MissedCall, String> calls) {
-        System.out.println("Вывести на печать " + calls.size() + " Записей? Введите да/нет");
-        String choice = scanner.nextLine();
-        if (choice.equals("да")) {
-            calls.forEach((key, value) -> System.out.println(key + " : " + value));
-        }
-    }
-
 
 
     public static void main(String[] args) {
-        Map<String, Contact> contacts = new HashMap<>();
+        PhoneBook phoneBook = new PhoneBook(null, null);
+        MissedCall missedCall = new MissedCall();
+        int choiceInt = -1;
+        do {
+            System.out.println("Выберите действие:");
+            System.out.println("1. Создать список контактов автоматически");
+            System.out.println("2. Создать контакт");
+            System.out.println("3. Распечатать все контакты");
+            System.out.println("4. Распечатать группу контактов");
+            System.out.println("5. Пропущенные звонки");
+            System.out.println("6. Распечатать пропущенные звонки");
+            System.out.println("0. Выход");
 
-        System.out.println("Введите количество контактов, которые необходимо создать");
-        String numberRecords = scanner.nextLine();
-        int intNumberRecords = Integer.parseInt(numberRecords);
-        contacts = DataGenerator.formationContacts(intNumberRecords, contacts);
+            String choice = scanner.nextLine();
+            choiceInt = Integer.parseInt(choice);
 
-        printContacts(contacts);
-        System.out.println("Введите колличество пропущенных звонков");
-        String numMissedCall = scanner.nextLine();
 
-        Map<MissedCall, String> missedCalls = new TreeMap<>();
-        createMissedCalls(contacts, missedCalls,Integer.parseInt(numMissedCall));
+            switch (choiceInt) {
+                case (1):
+                    System.out.println("Введите количество контактов, которые необходимо создать");
+                    String numberRecords = scanner.nextLine();
+                    int intNumberRecords = Integer.parseInt(numberRecords);
 
-        printMissedCalls(missedCalls);
+                    phoneBook = DataGenerator.formationContacts(intNumberRecords, phoneBook);
+                    break;
+                case (2):
+                    addContact(phoneBook);
+                    break;
 
+                case (3):
+                    phoneBook.printContactsGroups();
+                    break;
+                case (4):
+                    System.out.println("Введите имя группы: ");
+                    String nameGroup = scanner.nextLine();
+                    if (nameGroup == null) {
+                        nameGroup = " ";
+                    }
+                    System.out.println();
+                    if (phoneBook.getPhoneBook().containsKey(nameGroup)) {
+                        phoneBook.printContactsInGroups(nameGroup);
+                    } else {
+                        System.out.println("Такого контакта не существует");
+                    }
+                    break;
+                case (5):
+                    System.out.println("Введите количество пропущенных звонков");
+                    String numMissedCall = scanner.nextLine();
+                    for (int call = 0; call < Integer.parseInt(numMissedCall); call++) {
+                       missedCall.addMissedCallRND(DataGenerator.getRNDPhone(DataGenerator.rangePhoneNumber), phoneBook);
+                    }
+                    break;
+                case (6):
+                    missedCall.printMissedCalls(phoneBook);
+                    break;
+
+            }
+        } while (choiceInt != 0);
+        scanner.close();
     }
 }

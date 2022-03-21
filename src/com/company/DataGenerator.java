@@ -2,13 +2,9 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DataGenerator {
-
-    public static final int RNDRangePhone = 3;
-
+    public static final int rangePhoneNumber = 1;
     public static String[] listManNames = {"Август", "Агап", "Агафон", "Адам", "Адриан", "Азарий", "Аким", "Алан",
             "Александр", "Алексей", "Альберт", "Анатолий", "Андрей", "Антип", "Антон", "Анфим", "Аполлинарий", "Арий",
             "Аристарх", "Аркадий", "Арно", "Арнольд", "Арсений", "Артем", "Артемий", "Артур", "Архип", "Афанасий",
@@ -208,7 +204,6 @@ public class DataGenerator {
             "Осиповна", "Павловна", "Петровна", "Платоновна", "Прохоровна", "Романовна", "Рудольфовна", "Рустамовна",
             "Семёновна", "Сергеевна", "Сидоровна", "Сильвестровна", "Соломоновна", "Станиславовна", "Степановна", "Тимофеевна",
             "Фёдоровна", "Филипповна", "Юрьевна", "Яковлевна", "Ярославовна"};
-    public static Map<String, ArrayList<Contact>> contactGroup = new HashMap<>();
 
     public static int getRandom(int intRange) {
         return (int) (Math.random() * intRange);
@@ -235,61 +230,50 @@ public class DataGenerator {
             contact = new Contact(listFemaleNames[getRandom(listFemaleNames.length)],
                     listFemaleSurnames[getRandom(listFemaleSurnames.length)],
                     listFemalePatronymics[getRandom(listFemalePatronymics.length)],
-                    Gender.FEMALE, getRNDPhone(RNDRangePhone));
+                    Gender.FEMALE, getRNDPhone(rangePhoneNumber));
         } else {
             contact = new Contact(listManNames[getRandom(listManNames.length)],
                     listManSurnames[getRandom(listManSurnames.length)],
                     listManPatronymics[getRandom(listManPatronymics.length)],
-                    Gender.MAN, getRNDPhone(RNDRangePhone));
+                    Gender.MAN, getRNDPhone(rangePhoneNumber));
         }
         return contact;
     }
 
-    public static Contact generatingContactLimit() {
-        Contact contact;
-        if (getRandom(2) == 0) {
-            contact = new Contact(listFemaleNames[getRandom(9)],
-                    listFemaleSurnames[getRandom(9)],
-                    listFemalePatronymics[getRandom(9)],
-                    Gender.FEMALE, getRNDPhone(RNDRangePhone));
-        } else {
-            contact = new Contact(listManNames[getRandom(9)],
-                    listManSurnames[getRandom(9)],
-                    listManPatronymics[getRandom(9)],
-                    Gender.MAN, getRNDPhone(RNDRangePhone));
+    public static PhoneBook formationGroupsByFirstSymbols(int numberOfSymbols, Contact contact, PhoneBook phoneBook) {
+
+        while (numberOfSymbols > 0) {
+            String nameGroup = contact.getSurname().substring(0, numberOfSymbols);
+
+            if (phoneBook.getPhoneBook().containsKey(nameGroup)) {
+//                phoneBook.getPhoneBook().get(nameGroup).add(contact);
+                phoneBook.addContactInGroup(nameGroup,contact);
+            } else {
+                ArrayList<Contact> contacts = new ArrayList<>();
+                contacts.add(contact);
+                phoneBook.addContactInGroup(nameGroup,contact);
+
+            }
+            numberOfSymbols--;
         }
-        return contact;
+        return phoneBook;
     }
 
-    public static void formationGroupsByFirstSymbols(int numberOfSymbols, Contact contact) {
-        if (contactGroup.containsKey(contact.getSurname().substring(0, numberOfSymbols))) {
-            contactGroup.get(contact.getSurname().substring(0, numberOfSymbols)).add(contact);
-        } else {
-            contactGroup.put(contact.getSurname().substring(0, numberOfSymbols), new ArrayList<>());
-            contactGroup.get(contact.getSurname().substring(0, numberOfSymbols)).add(contact);
-        }
+    public static PhoneBook formationContacts(int number, PhoneBook phoneBook) {
 
-    }
-
-    public static Map<String, Contact> formationContacts(int number, Map<String, Contact> contacts) {
-        int recordsCreated = 0;
         long start = (new Date()).getTime();
         for (int createMap = 0; createMap < number; createMap++) {
             Contact contact = generatingContact();
-            String phone = contact.getPhoneNumber();
-
-            if (!contacts.containsKey(phone)) {
-                formationGroupsByFirstSymbols(1, contact);
-                formationGroupsByFirstSymbols(2, contact);
-                formationGroupsByFirstSymbols(3, contact);
-                contacts.put(phone, contact);
-                recordsCreated++;
-            }
-
+//            String phone = contact.getPhoneNumber();
+            phoneBook = DataGenerator.formationGroupsByFirstSymbols(3, contact, phoneBook);
         }
-        System.out.println("создано: " + recordsCreated + " записей");
+
+        if (phoneBook.getPhoneBook().containsKey(null)) {
+            phoneBook.getPhoneBook().remove(null);
+        }
+        System.out.println("создано: " + phoneBook.getPhoneBook().size() + " записей");
         System.out.println("за " + (((new Date()).getTime()) - start) + " миллисекунд");
-        return contacts;
+        return phoneBook;
     }
 }
 

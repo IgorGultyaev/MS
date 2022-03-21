@@ -1,36 +1,35 @@
 package com.company;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class MissedCall implements Comparable<MissedCall>{
-    private LocalDateTime time;
+public class MissedCall {
+
+    private Map<DateTimeRecord, String> missedCalls;
 
     public MissedCall() {
-        time = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(),
-                DataGenerator.getRandom(12), DataGenerator.getRandom(12), DataGenerator.getRandom(12));
+        missedCalls = new TreeMap();
     }
 
-    public String getContact(Map<String, Contact> contacts, String numberPhone) {
-        if (contacts.containsKey(numberPhone)) {
-            return contacts.get(numberPhone).getFIO();
-        } else {
-            return numberPhone;
-        }
+    public void addMissedCallRND(String phoneNumber, PhoneBook phoneBook) {
+//        if (phoneBook.getContactByNumber().containsKey(phoneNumber)) {
+//            phoneNumber = phoneBook.getContactByNumber().get(phoneNumber).getFIO();
+//        }
+        missedCalls.put(new DateTimeRecord(), phoneNumber);
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public void printMissedCalls(PhoneBook phoneBook) {
+//        System.out.println(phoneBook.containsPhone("+7(921)-000-00-00"));
+//        System.out.println(phoneBook.getContactByNumber().containsKey("+7(921)-000-00-00"));
+//        System.out.println(phoneBook.getContactByNumber());
+        this.missedCalls.forEach((key, value)
+                -> System.out.println(key + " : " +
+                (phoneBook.containsPhone(value) ? phoneBook.getFIOByNumber(value) : value)));
+//        phoneBook.containsPhone(value)
     }
-
-    @Override
+//TODO избавиться от всех методов, передающих мапу, даже геттеры, должны выдавать только конкретные поля, что бы не допустить добавления
     public String toString() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yy hh:mm:ss");
-        return dtf.format(time);
+        return missedCalls.toString();
     }
-@Override
-    public int compareTo (MissedCall missedCall){
-        return time.compareTo(missedCall.getTime());
-    }
+
 }
