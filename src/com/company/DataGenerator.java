@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class DataGenerator {
-    public static final int rangePhoneNumber = 1;
+    public static final int rangePhoneNumber = 2;
     public static String[] listManNames = {"Август", "Агап", "Агафон", "Адам", "Адриан", "Азарий", "Аким", "Алан",
             "Александр", "Алексей", "Альберт", "Анатолий", "Андрей", "Антип", "Антон", "Анфим", "Аполлинарий", "Арий",
             "Аристарх", "Аркадий", "Арно", "Арнольд", "Арсений", "Артем", "Артемий", "Артур", "Архип", "Афанасий",
@@ -244,15 +244,10 @@ public class DataGenerator {
 
         while (numberOfSymbols > 0) {
             String nameGroup = contact.getSurname().substring(0, numberOfSymbols);
-
-            if (phoneBook.getPhoneBook().containsKey(nameGroup)) {
-//                phoneBook.getPhoneBook().get(nameGroup).add(contact);
+            if (phoneBook.containsGroup(nameGroup)) {
                 phoneBook.addContactInGroup(nameGroup,contact);
             } else {
-                ArrayList<Contact> contacts = new ArrayList<>();
-                contacts.add(contact);
                 phoneBook.addContactInGroup(nameGroup,contact);
-
             }
             numberOfSymbols--;
         }
@@ -264,14 +259,12 @@ public class DataGenerator {
         long start = (new Date()).getTime();
         for (int createMap = 0; createMap < number; createMap++) {
             Contact contact = generatingContact();
-//            String phone = contact.getPhoneNumber();
             phoneBook = DataGenerator.formationGroupsByFirstSymbols(3, contact, phoneBook);
         }
 
-        if (phoneBook.getPhoneBook().containsKey(null)) {
-            phoneBook.getPhoneBook().remove(null);
-        }
-        System.out.println("создано: " + phoneBook.getPhoneBook().size() + " записей");
+        phoneBook.removeNull();
+
+        System.out.println("создано: " + phoneBook.getNumRecords() + " записей");
         System.out.println("за " + (((new Date()).getTime()) - start) + " миллисекунд");
         return phoneBook;
     }

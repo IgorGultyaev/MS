@@ -35,9 +35,10 @@ public class Main {
         System.out.println("Введите имя группы");
         nameGroup = scanner.nextLine();
         phoneBook.addContactInGroup(nameGroup, contact);
-        if (phoneBook.getPhoneBook().containsKey(null)) {
-            phoneBook.getPhoneBook().remove(null);
-        }
+        phoneBook.removeNull();
+//        if (phoneBook.getPhoneBook().containsKey(null)) {
+//            phoneBook.getPhoneBook().remove(null);
+//        }
         return phoneBook;
     }
 
@@ -52,13 +53,12 @@ public class Main {
             System.out.println("2. Создать контакт");
             System.out.println("3. Распечатать все контакты");
             System.out.println("4. Распечатать группу контактов");
-            System.out.println("5. Пропущенные звонки");
+            System.out.println("5. Создать пропущенные звонки");
             System.out.println("6. Распечатать пропущенные звонки");
             System.out.println("0. Выход");
 
             String choice = scanner.nextLine();
             choiceInt = Integer.parseInt(choice);
-
 
             switch (choiceInt) {
                 case (1):
@@ -82,7 +82,7 @@ public class Main {
                         nameGroup = " ";
                     }
                     System.out.println();
-                    if (phoneBook.getPhoneBook().containsKey(nameGroup)) {
+                    if (phoneBook.containsGroup(nameGroup)) {
                         phoneBook.printContactsInGroups(nameGroup);
                     } else {
                         System.out.println("Такого контакта не существует");
