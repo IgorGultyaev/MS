@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class Main {
     public static Scanner scanner = new Scanner(System.in);
-    public static PhoneBook phoneBook;
 
     public static PhoneBook addContact(PhoneBook phoneBook) {
         System.out.println("Фамилию");
@@ -36,9 +35,6 @@ public class Main {
         nameGroup = scanner.nextLine();
         phoneBook.addContactInGroup(nameGroup, contact);
         phoneBook.removeNull();
-//        if (phoneBook.getPhoneBook().containsKey(null)) {
-//            phoneBook.getPhoneBook().remove(null);
-//        }
         return phoneBook;
     }
 
